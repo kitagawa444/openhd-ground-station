@@ -1,0 +1,12 @@
+[Unit]
+Description=OpenHD SysUtils
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/openhd_sys_utils
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

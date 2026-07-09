@@ -1,0 +1,23 @@
+[2026-07-09 17:09:54.995] [default] [warning] No suitable IP address found for DEVICE_IP_GND. Using default.
+[2026-07-09 17:09:54.995] [default] [warning] No suitable IP address found for DEVICE_IP_AIR. Using default.
+[2J[1;1H2.7.1-evo
+Built: Jul  9 2026 17:07:01
+Platform: X86
+Camera: N/A
+
+[94m  #######  ########  ######## ##    ## ##     ## ######## 
+ ##     ## ##     ## ##       ###   ## ##     ## ##     ##
+ ##     ## ##     ## ##       ####  ## ##     ## ##     ##
+ ##     ## ########  ######   ## ## ## ######### ##     ##
+ ##     ## ##        ##       ##  #### ##     ## ##     ##
+ ##     ## ##        ##       ##   ### ##     ## ##     ##
+  #######  ##        ######## ##    ## ##     ## ######## 
+[0m----------------------- [94mOpenSource[0m -----------------------
+
+----------------------- [31mGround Unit[0m ----------------------
+
+[34mWaiting for wifi card(s)...[0m
+[32mOpenHD was successfully started.[0m
+Got SIGTERM, exiting
+[2026-07-09 17:10:23.315] [eth_manager] [warning] stop begin
+[2026-07-09 17:10:23.315] [eth_manager] [warning] stop end
