@@ -7,6 +7,7 @@ This repository tracks:
 - local configuration files
 - helper scripts
 - install and verification notes
+- ground-side UI architecture notes
 - Codex work log for this machine
 
 This repository does not vendor upstream source trees. Those are kept separately in `~/wifi/` and pinned by commit hash in [docs/versions.md](docs/versions.md).
@@ -27,6 +28,33 @@ This repository does not vendor upstream source trees. Those are kept separately
 - [logs](logs): captured runtime logs
 - [docs/versions.md](docs/versions.md): upstream repo URLs, branches, and pinned commits
 - [docs/worklog.md](docs/worklog.md): Codex work summary and verification notes
+- [docs/ui-architecture-v0.md](docs/ui-architecture-v0.md): revised v0 architecture for a new ground UI
+- [ground_ui](ground_ui): Qt6/QML flight UI with live OpenHD telemetry and RTP health integration
+
+## Ground UI Prototype
+
+Build:
+
+```bash
+cmake -S ~/openhd-ground-station/ground_ui -B ~/openhd-ground-station/ground_ui/build
+cmake --build ~/openhd-ground-station/ground_ui/build -j"$(nproc)"
+```
+
+Run from a desktop GUI session:
+
+```bash
+~/openhd-ground-station/ground_ui/build/openhd_ground_ui
+```
+
+The UI connects to OpenHD Ground's multi-client MAVLink TCP server at `127.0.0.1:5760`, so it can run alongside QOpenHD. It decodes the additional RTP forwarding path at UDP `5800` without consuming QOpenHD's normal UDP `5600` feed.
+
+Its default mode is live and read-only. Use `--demo` only for UI-only work:
+
+```bash
+~/openhd-ground-station/ground_ui/build/openhd_ground_ui --demo
+```
+
+The UI shows live vehicle telemetry, OpenHD link statistics, camera metadata, and decoded RTP video.
 
 ## Start OpenHD Ground
 

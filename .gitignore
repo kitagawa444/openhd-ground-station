@@ -3,3 +3,5 @@
 *~
 core
 logs/*.core
+ground_ui/build/
+ground_ui/build-*/
