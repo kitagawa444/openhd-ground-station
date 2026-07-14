@@ -37,6 +37,7 @@ void Application::configureContext() {
     rootContext->setContextProperty(QStringLiteral("linkModel"), m_context.linkModel());
     rootContext->setContextProperty(QStringLiteral("videoModel"), m_context.videoModel());
     rootContext->setContextProperty(QStringLiteral("alertModel"), m_context.alertListModel());
+    rootContext->setContextProperty(QStringLiteral("diagnosticModel"), m_context.diagnosticsModel());
     rootContext->setContextProperty(QStringLiteral("flightCommands"), m_context.flightCommands());
     rootContext->setContextProperty(QStringLiteral("cameraCommands"), m_context.cameraCommands());
     rootContext->setContextProperty(QStringLiteral("systemCommands"), m_context.systemCommands());

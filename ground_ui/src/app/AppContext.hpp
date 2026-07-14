@@ -8,11 +8,13 @@
 #include "commands/FlightCommands.hpp"
 #include "commands/SystemCommands.hpp"
 #include "models/AlertListModel.hpp"
+#include "models/DiagnosticsModel.hpp"
 #include "models/LinkModel.hpp"
 #include "models/VehicleModel.hpp"
 #include "models/VideoModel.hpp"
 #include "integration/OpenHDBackend.hpp"
 #include "services/AlertService.hpp"
+#include "services/DiagnosticsService.hpp"
 #include "services/DemoDataService.hpp"
 #include "services/LinkStateService.hpp"
 #include "services/VehicleStateService.hpp"
@@ -31,6 +33,7 @@ public:
     LinkModel *linkModel();
     VideoModel *videoModel();
     AlertListModel *alertListModel();
+    DiagnosticsModel *diagnosticsModel();
     FlightCommands *flightCommands();
     CameraCommands *cameraCommands();
     SystemCommands *systemCommands();
@@ -44,10 +47,12 @@ private:
     LinkStateService m_linkStateService;
     VideoService m_videoService;
     AlertService m_alertService;
+    DiagnosticsService m_diagnosticsService;
     VehicleModel m_vehicleModel;
     LinkModel m_linkModel;
     VideoModel m_videoModel;
     AlertListModel m_alertListModel;
+    DiagnosticsModel m_diagnosticsModel;
     FlightCommands m_flightCommands;
     CameraCommands m_cameraCommands;
     SystemCommands m_systemCommands;

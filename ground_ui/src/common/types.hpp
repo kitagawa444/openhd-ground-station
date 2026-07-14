@@ -23,6 +23,9 @@ struct VehicleState {
     double relativeAltitude = 0.0;
     double groundSpeed = 0.0;
     double verticalSpeed = 0.0;
+    double rollDegrees = 0.0;
+    double pitchDegrees = 0.0;
+    double yawDegrees = 0.0;
     int batteryPercent = -1;
     double batteryVoltage = 0.0;
     int satellites = 0;
@@ -41,6 +44,7 @@ struct LinkState {
     int videoBitrateKbps = 0;
     double packetLossPercent = -1.0;
     int latencyMs = -1;
+    int rssiDbm = -127;
     bool rcConnected = false;
 };
 
@@ -64,6 +68,22 @@ struct AlertItem {
     QString message;
     bool sticky = false;
     QDateTime timestamp = QDateTime::currentDateTimeUtc();
+};
+
+struct DiagnosticItem {
+    QString id;
+    QString group;
+    QString section;
+    QString label;
+    QString value;
+    QString detail;
+};
+
+struct DiagnosticMessage {
+    QString timestamp;
+    QString source;
+    QString severity;
+    QString text;
 };
 
 }  // namespace openhd

@@ -42,6 +42,10 @@ int LinkModel::latencyMs() const {
     return m_service->state().latencyMs;
 }
 
+int LinkModel::rssiDbm() const {
+    return m_service->state().rssiDbm;
+}
+
 bool LinkModel::rcConnected() const {
     return m_service->state().rcConnected;
 }

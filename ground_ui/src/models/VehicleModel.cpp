@@ -54,6 +54,18 @@ double VehicleModel::verticalSpeed() const {
     return m_service->state().verticalSpeed;
 }
 
+double VehicleModel::rollDegrees() const {
+    return m_service->state().rollDegrees;
+}
+
+double VehicleModel::pitchDegrees() const {
+    return m_service->state().pitchDegrees;
+}
+
+double VehicleModel::yawDegrees() const {
+    return m_service->state().yawDegrees;
+}
+
 int VehicleModel::batteryPercent() const {
     return m_service->state().batteryPercent;
 }

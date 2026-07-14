@@ -19,6 +19,9 @@ class VehicleModel : public QObject {
     Q_PROPERTY(double relativeAltitude READ relativeAltitude NOTIFY changed)
     Q_PROPERTY(double groundSpeed READ groundSpeed NOTIFY changed)
     Q_PROPERTY(double verticalSpeed READ verticalSpeed NOTIFY changed)
+    Q_PROPERTY(double rollDegrees READ rollDegrees NOTIFY changed)
+    Q_PROPERTY(double pitchDegrees READ pitchDegrees NOTIFY changed)
+    Q_PROPERTY(double yawDegrees READ yawDegrees NOTIFY changed)
     Q_PROPERTY(int batteryPercent READ batteryPercent NOTIFY changed)
     Q_PROPERTY(double batteryVoltage READ batteryVoltage NOTIFY changed)
     Q_PROPERTY(int satellites READ satellites NOTIFY changed)
@@ -41,6 +44,9 @@ public:
     double relativeAltitude() const;
     double groundSpeed() const;
     double verticalSpeed() const;
+    double rollDegrees() const;
+    double pitchDegrees() const;
+    double yawDegrees() const;
     int batteryPercent() const;
     double batteryVoltage() const;
     int satellites() const;

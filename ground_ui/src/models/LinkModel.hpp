@@ -16,6 +16,7 @@ class LinkModel : public QObject {
     Q_PROPERTY(int videoBitrateKbps READ videoBitrateKbps NOTIFY changed)
     Q_PROPERTY(double packetLossPercent READ packetLossPercent NOTIFY changed)
     Q_PROPERTY(int latencyMs READ latencyMs NOTIFY changed)
+    Q_PROPERTY(int rssiDbm READ rssiDbm NOTIFY changed)
     Q_PROPERTY(bool rcConnected READ rcConnected NOTIFY changed)
 
 public:
@@ -29,6 +30,7 @@ public:
     int videoBitrateKbps() const;
     double packetLossPercent() const;
     int latencyMs() const;
+    int rssiDbm() const;
     bool rcConnected() const;
 
 signals:

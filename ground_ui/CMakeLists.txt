@@ -41,6 +41,8 @@ qt_add_executable(openhd_ground_ui
     src/services/VideoService.hpp
     src/services/AlertService.cpp
     src/services/AlertService.hpp
+    src/services/DiagnosticsService.cpp
+    src/services/DiagnosticsService.hpp
     src/services/DemoDataService.cpp
     src/services/DemoDataService.hpp
     src/models/VehicleModel.cpp
@@ -51,6 +53,8 @@ qt_add_executable(openhd_ground_ui
     src/models/VideoModel.hpp
     src/models/AlertListModel.cpp
     src/models/AlertListModel.hpp
+    src/models/DiagnosticsModel.cpp
+    src/models/DiagnosticsModel.hpp
     src/commands/FlightCommands.cpp
     src/commands/FlightCommands.hpp
     src/commands/CameraCommands.cpp
@@ -69,6 +73,8 @@ qt_add_qml_module(openhd_ground_ui
         qml/theme/Metrics.qml
         qml/theme/Typography.qml
         qml/screens/FlightScreen.qml
+        qml/screens/DiagnosticsScreen.qml
+        qml/screens/MessagesScreen.qml
         qml/panels/TopStatusBar.qml
         qml/panels/LeftHudPanel.qml
         qml/panels/RightActionPanel.qml
@@ -79,6 +85,12 @@ qt_add_qml_module(openhd_ground_ui
         qml/components/ActionButton.qml
         qml/components/WarningBanner.qml
         qml/components/VideoCanvas.qml
+        qml/components/OsdReadout.qml
+        qml/components/FlightTape.qml
+        qml/components/CompassRibbon.qml
+        qml/components/HorizonOverlay.qml
+        qml/components/DiagnosticCard.qml
+        qml/components/NavigationBar.qml
 )
 
 target_include_directories(openhd_ground_ui PRIVATE src)
@@ -134,6 +146,8 @@ if(BUILD_TESTING)
         src/services/VideoService.hpp
         src/services/AlertService.cpp
         src/services/AlertService.hpp
+        src/services/DiagnosticsService.cpp
+        src/services/DiagnosticsService.hpp
     )
 
     target_include_directories(openhd_backend_tests PRIVATE src)

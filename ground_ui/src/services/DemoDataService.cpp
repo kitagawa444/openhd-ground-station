@@ -44,6 +44,9 @@ void DemoDataService::refresh() {
     vehicle.relativeAltitude = 43.0 + 8.0 * std::sin(m_phase * 0.65);
     vehicle.groundSpeed = 11.0 + 4.2 * (0.5 + 0.5 * std::sin(m_phase * 0.9));
     vehicle.verticalSpeed = 1.8 * std::cos(m_phase * 0.75);
+    vehicle.rollDegrees = 17.0 * std::sin(m_phase * 0.85);
+    vehicle.pitchDegrees = 8.0 * std::cos(m_phase * 0.58);
+    vehicle.yawDegrees = vehicle.headingDegrees;
     vehicle.headingDegrees = std::fmod(vehicle.headingDegrees + 3.6, 360.0);
     vehicle.homeDistanceMeters = 58.0 + 18.0 * (0.5 + 0.5 * std::sin(m_phase * 0.33 + kPi / 4.0));
     vehicle.satellites = 17 + static_cast<int>(4.0 * (0.5 + 0.5 * std::sin(m_phase * 0.5)));
@@ -62,6 +65,7 @@ void DemoDataService::refresh() {
         link.packetLossPercent = 0.2 + 1.8 * (0.5 + 0.5 * std::sin(m_phase * 1.2 + 0.6));
         link.videoBitrateKbps = 9800 + static_cast<int>(3800.0 * (0.5 + 0.5 * std::sin(m_phase * 0.95)));
         link.latencyMs = 26 + static_cast<int>(18.0 * (0.5 + 0.5 * std::sin(m_phase * 1.1)));
+        link.rssiDbm = -62 + static_cast<int>(8.0 * std::sin(m_phase * 0.9));
         link.telemetryHealthy = true;
         link.videoHealthy = true;
         link.rcConnected = true;
@@ -70,6 +74,7 @@ void DemoDataService::refresh() {
         link.packetLossPercent = 100.0;
         link.videoBitrateKbps = 0;
         link.latencyMs = 0;
+        link.rssiDbm = -127;
         link.telemetryHealthy = false;
         link.videoHealthy = false;
         link.rcConnected = false;

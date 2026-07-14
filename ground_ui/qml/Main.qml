@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import QtQuick.Layouts
 import OpenHDGroundUI
 
 ApplicationWindow {
@@ -56,7 +57,51 @@ ApplicationWindow {
         }
     }
 
-    FlightScreen {
-        anchors.fill: parent
+    StackLayout {
+        id: screens
+
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: navigation.top
+        currentIndex: navigation.currentIndex
+
+        FlightScreen {}
+
+        DiagnosticsScreen {
+            title: "FLIGHT TELEMETRY"
+            subtitle: "Autopilot, position, attitude, GPS, power, and RC input"
+            metrics: diagnosticModel.flightMetrics
+        }
+
+        DiagnosticsScreen {
+            title: "LINK DIAGNOSTICS"
+            subtitle: "OpenHD radio cards, telemetry flow, video transport, and FEC"
+            metrics: diagnosticModel.linkMetrics
+        }
+
+        DiagnosticsScreen {
+            title: "OPENHD SYSTEM"
+            subtitle: "Air and Ground core health, camera status, power, networking, and radio modes"
+            metrics: diagnosticModel.systemMetrics
+        }
+
+        MessagesScreen {
+            messages: diagnosticModel.messages
+        }
+
+        DiagnosticsScreen {
+            title: "PROTOCOL INSPECTOR"
+            subtitle: "Every MAVLink/OpenHD frame observed by this ground station connection"
+            metrics: diagnosticModel.protocolMetrics
+        }
+    }
+
+    NavigationBar {
+        id: navigation
+
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
     }
 }

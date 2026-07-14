@@ -11,6 +11,7 @@
 namespace openhd {
 
 class AlertService;
+class DiagnosticsService;
 class LinkStateService;
 class VehicleStateService;
 class VideoService;
@@ -26,6 +27,7 @@ public:
                   LinkStateService *linkStateService,
                   VideoService *videoService,
                   AlertService *alertService,
+                  DiagnosticsService *diagnosticsService,
                   VideoFrameProvider *videoFrameProvider,
                   QObject *parent = nullptr,
                   quint16 telemetryTcpPort = DefaultTelemetryTcpPort);
@@ -47,9 +49,19 @@ private:
     void handleGpsRaw(const MavlinkFrame &frame);
     void handleVfrHud(const MavlinkFrame &frame);
     void handleHomePosition(const MavlinkFrame &frame);
+    void handleAttitude(const MavlinkFrame &frame);
+    void handleRcChannels(const MavlinkFrame &frame);
+    void handleStatusText(const MavlinkFrame &frame);
     void handleOpenHDLinkStats(const MavlinkFrame &frame);
     void handleOpenHDVideoStats(const MavlinkFrame &frame);
     void handleOpenHDCameraStatus(const MavlinkFrame &frame);
+    void handleOpenHDSystemStatus(const MavlinkFrame &frame);
+    void setMetric(const QString &group,
+                   const QString &section,
+                   const QString &id,
+                   const QString &label,
+                   const QString &value,
+                   const QString &detail = {});
     void refreshAlerts();
     void setBackendConnected(bool connected);
     bool isFlightControllerFrame(const MavlinkFrame &frame) const;
@@ -58,6 +70,7 @@ private:
     LinkStateService *m_linkStateService;
     VideoService *m_videoService;
     AlertService *m_alertService;
+    DiagnosticsService *m_diagnosticsService;
     VideoFrameProvider *m_videoFrameProvider;
     quint16 m_telemetryTcpPort;
     QTcpSocket m_telemetrySocket;

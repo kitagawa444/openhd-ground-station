@@ -24,6 +24,14 @@
 - Branch checked out: `main`
 - Commit: `33e096ce447238af4786b1d75dd5b79e1cee91ae`
 
+### QOpenHD reference source
+
+- Path: `~/wifi/QOpenHD`
+- URL: `https://github.com/OpenHD/QOpenHD.git`
+- Source reference: installed QOpenHD package `2.7.1-03-18-2026--21-41-37-fee63eb4`
+- Commit checked out: `fee63eb47560ed077447a3fb49fdc51838952f90`
+- Purpose: read-only reference for independently reproducing the QOpenHD FPV layout in `ground_ui`; it is not a submodule or vendored source tree.
+
 ### rtl88x2bu-ohd
 
 - Path: `~/wifi/rtl88x2bu-ohd`

@@ -1,11 +1,14 @@
 #include <QtTest>
 
+#include <cstring>
+
 #include <QCoreApplication>
 #include <QTcpServer>
 #include <QTcpSocket>
 
 #include "integration/OpenHDBackend.hpp"
 #include "services/AlertService.hpp"
+#include "services/DiagnosticsService.hpp"
 #include "services/LinkStateService.hpp"
 #include "services/VehicleStateService.hpp"
 #include "services/VideoService.hpp"
@@ -32,6 +35,18 @@ void appendU32(QByteArray &buffer, const quint32 value) {
 
 void appendI32(QByteArray &buffer, const qint32 value) {
     appendU32(buffer, static_cast<quint32>(value));
+}
+
+void appendFloat(QByteArray &buffer, const float value) {
+    quint32 raw = 0;
+    static_assert(sizeof(raw) == sizeof(value));
+    std::memcpy(&raw, &value, sizeof(raw));
+    appendU32(buffer, raw);
+}
+
+void writeU16(QByteArray &buffer, const int offset, const quint16 value) {
+    buffer[offset] = static_cast<char>(value & 0xFFU);
+    buffer[offset + 1] = static_cast<char>((value >> 8U) & 0xFFU);
 }
 
 QByteArray makeMavlinkV2Frame(const quint32 messageId, const QByteArray &payload) {
@@ -97,6 +112,43 @@ QByteArray cameraStatusPayload() {
     return payload;
 }
 
+QByteArray attitudePayload() {
+    QByteArray payload;
+    appendU32(payload, 1000);
+    appendFloat(payload, 0.17453292F);
+    appendFloat(payload, -0.08726646F);
+    appendFloat(payload, 1.57079633F);
+    appendFloat(payload, 0.0F);
+    appendFloat(payload, 0.0F);
+    appendFloat(payload, 0.0F);
+    return payload;
+}
+
+QByteArray wifiCardPayload() {
+    QByteArray payload(38, '\0');
+    payload[23] = static_cast<char>(-58);
+    payload[29] = static_cast<char>(83);
+    payload[32] = static_cast<char>(2);
+    return payload;
+}
+
+QByteArray channelAnalysisPayload() {
+    QByteArray payload(191, '\0');
+    writeU16(payload, 8, 5180);
+    writeU16(payload, 68, 12);
+    payload[190] = static_cast<char>(45);
+    return payload;
+}
+
+const DiagnosticItem *findMetric(const QVector<DiagnosticItem> &metrics, const QString &label) {
+    for (const auto &metric : metrics) {
+        if (metric.label == label) {
+            return &metric;
+        }
+    }
+    return nullptr;
+}
+
 }  // namespace
 
 class OpenHDBackendTests : public QObject {
@@ -115,10 +167,12 @@ void OpenHDBackendTests::mapsLiveMavlinkFramesIntoServices() {
     LinkStateService linkService;
     VideoService videoService;
     AlertService alertService;
+    DiagnosticsService diagnosticsService;
     OpenHDBackend backend(&vehicleService,
                           &linkService,
                           &videoService,
                           &alertService,
+                          &diagnosticsService,
                           nullptr,
                           nullptr,
                           testTelemetryPort);
@@ -132,7 +186,13 @@ void OpenHDBackendTests::mapsLiveMavlinkFramesIntoServices() {
     frames.append(makeMavlinkV2Frame(0, heartbeatPayload()));
     frames.append(makeMavlinkV2Frame(1, systemStatusPayload()));
     frames.append(makeMavlinkV2Frame(33, globalPositionPayload()));
+    frames.append(makeMavlinkV2Frame(30, attitudePayload()));
+    frames.append(makeMavlinkV2Frame(1212, wifiCardPayload()));
     frames.append(makeMavlinkV2Frame(1219, cameraStatusPayload()));
+    frames.append(makeMavlinkV2Frame(1224, channelAnalysisPayload()));
+    QByteArray unknownPayload(64, '\0');
+    unknownPayload[63] = static_cast<char>(0x7F);
+    frames.append(makeMavlinkV2Frame(5000, unknownPayload));
     client->write(frames);
     QVERIFY(client->waitForBytesWritten());
 
@@ -148,6 +208,9 @@ void OpenHDBackendTests::mapsLiveMavlinkFramesIntoServices() {
     QCOMPARE(vehicleService.state().groundSpeed, 5.0);
     QCOMPARE(vehicleService.state().verticalSpeed, 1.5);
     QCOMPARE(vehicleService.state().headingDegrees, 90.0);
+    QVERIFY(qAbs(vehicleService.state().rollDegrees - 10.0) < 0.01);
+    QVERIFY(qAbs(vehicleService.state().pitchDegrees + 5.0) < 0.01);
+    QVERIFY(qAbs(vehicleService.state().yawDegrees - 90.0) < 0.01);
     QCOMPARE(vehicleService.state().batteryPercent, 78);
     QCOMPARE(vehicleService.state().batteryVoltage, 15.84);
     QCOMPARE(videoService.state().streamWidth, 1920);
@@ -156,6 +219,25 @@ void OpenHDBackendTests::mapsLiveMavlinkFramesIntoServices() {
     QCOMPARE(videoService.state().codec, QStringLiteral("H.264 RTP"));
     QVERIFY(linkService.state().backendConnected);
     QTRY_VERIFY(linkService.state().linkConnected);
+    QCOMPARE(linkService.state().rssiDbm, -58);
+
+    QTRY_VERIFY(findMetric(diagnosticsService.metrics(QStringLiteral("system")),
+                           QStringLiteral("Analysis progress")) != nullptr);
+    const auto systemMetrics = diagnosticsService.metrics(QStringLiteral("system"));
+    const auto *analysisProgress = findMetric(systemMetrics, QStringLiteral("Analysis progress"));
+    QVERIFY(analysisProgress != nullptr);
+    QCOMPARE(analysisProgress->value, QStringLiteral("45 %"));
+    const auto *foreignPackets = findMetric(systemMetrics, QStringLiteral("5180 MHz foreign packets"));
+    QVERIFY(foreignPackets != nullptr);
+    QCOMPARE(foreignPackets->value, QStringLiteral("12"));
+
+    QTRY_VERIFY(findMetric(diagnosticsService.metrics(QStringLiteral("protocol")),
+                           QStringLiteral("MAVLINK 5000")) != nullptr);
+    const auto protocolMetrics = diagnosticsService.metrics(QStringLiteral("protocol"));
+    const auto *unknownFrame = findMetric(protocolMetrics, QStringLiteral("MAVLINK 5000"));
+    QVERIFY(unknownFrame != nullptr);
+    QVERIFY(unknownFrame->detail.contains(QStringLiteral("64 bytes")));
+    QVERIFY(unknownFrame->detail.endsWith(QStringLiteral("7f")));
 }
 
 }  // namespace openhd

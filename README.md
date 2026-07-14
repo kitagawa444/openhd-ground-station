@@ -54,7 +54,18 @@ Its default mode is live and read-only. Use `--demo` only for UI-only work:
 ~/openhd-ground-station/ground_ui/build/openhd_ground_ui --demo
 ```
 
-The UI shows live vehicle telemetry, OpenHD link statistics, camera metadata, and decoded RTP video.
+The UI has six live, read-only pages:
+
+- `FPV`: decoded RTP video and flight HUD
+- `FLIGHT`: autopilot, position, attitude, GPS, battery, RC, and home telemetry
+- `LINK`: OpenHD radio-card, telemetry, video transport, and FEC diagnostics
+- `SYSTEM`: OpenHD Air/Ground core, camera, power, networking, radio-mode, and channel data
+- `MESSAGES`: MAVLink `STATUSTEXT` messages
+- `PROTOCOL`: every received MAVLink/OpenHD frame, including complete payload data
+
+Click any diagnostic card to expand its full value. This includes long channel lists, RTSP configuration, and raw protocol payloads. Values only appear when the connected Air, Ground, or flight controller actually publishes their corresponding MAVLink message.
+
+The `FPV` page follows the QOpenHD OSD composition: video is the back layer and a separate HUD layer shows downlink quality/RSSI, video rate and loss, battery, GPS, RC state, compass, artificial horizon, speed, altitude, flight mode, position, vertical speed, home distance, and alerts. The reference source is pinned in [docs/versions.md](docs/versions.md).
 
 ## Start OpenHD Ground
 

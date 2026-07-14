@@ -214,3 +214,52 @@ gst-launch-1.0 udpsrc address=127.0.0.1 port=5800 \
 ```
 
 Installed `gstreamer1.0-libav` to provide the H.264/H.265 software decoders used by the Qt6 UI. The actual OpenHD MAVLink TCP endpoint was also verified as `5760`; the old `1445` comment in OpenHD source is stale.
+
+### 12. Full read-only telemetry inspection
+
+Expanded the live Qt6/QML UI beyond the FPV screen so received OpenHD and MAVLink data can be inspected without using QOpenHD.
+
+Implemented:
+
+- six pages for FPV, flight telemetry, link diagnostics, OpenHD system state, MAVLink status messages, and protocol inspection
+- human-readable decoding for all OpenHD 2.7 custom messages `1211` through `1230` that are defined by the backend, including radio-card, video/FEC, camera, core, power, channel-scan, channel-analysis, and RTSP data
+- standard flight decoding for heartbeat, system/battery status, GPS, position, attitude, VFR HUD, RC channels, home position, and `STATUSTEXT`
+- a protocol page that retains every valid MAVLink frame, including unknown/future message IDs and complete raw payload data
+- detail popups on diagnostic cards so long values remain available in the UI
+
+This is display-only by design. It does not send OpenHD settings, RC, camera, mission, or arm commands; those need a separate, safety-reviewed control phase.
+
+Verification:
+
+- `cmake --build ground_ui/build -j"$(nproc)"`
+- `ctest --test-dir ground_ui/build --output-on-failure`
+- `timeout 5s env QT_QPA_PLATFORM=offscreen ./ground_ui/build/openhd_ground_ui`
+
+### 13. QOpenHD FPV reference source
+
+Cloned QOpenHD outside this repository at `~/wifi/QOpenHD` and checked out the exact commit embedded in the installed package: `fee63eb47560ed077447a3fb49fdc51838952f90`.
+
+The source confirms the QOpenHD FPV architecture:
+
+- `qml/main.qml` keeps the primary video fullscreen in the back layer
+- `qml/ui/HUDOverlayGrid.qml` overlays independently configurable widgets above it
+- the widgets cover link/RSSI, bitrate, Air/Ground health, battery, GPS, flight mode, horizon, altitude, speed, heading, map, mission, and HUD messages
+
+Future FPV work will use that layout and data coverage as a reference while keeping the Qt6 `ground_ui` implementation independent. QOpenHD is GPL-3.0, so copying its source would require licensing the resulting derivative work under GPL-3.0; visual behavior and public protocol interfaces will instead be reimplemented deliberately.
+
+### 14. QOpenHD-style FPV OSD first pass
+
+Replaced the first prototype HUD with a QOpenHD-style OSD composition in the Qt6 UI:
+
+- RTP video remains the fullscreen background layer
+- link RSSI, quality, bitrate, packet loss, telemetry state, battery, GPS, RC state, flight mode, and alerts are overlaid at the edges
+- an independently implemented compass ribbon, artificial horizon, speed tape, altitude tape, reticle, position, vertical speed, and home-distance readouts are overlaid above the video
+- `ATTITUDE` MAVLink data now updates roll, pitch, and yaw in the vehicle model
+- OpenHD Wi-Fi card statistics now expose RSSI to the link model
+- demo data animates attitude and RSSI to validate the OSD without the Air unit
+
+Verification:
+
+- `cmake -S ground_ui -B ground_ui/build && cmake --build ground_ui/build -j"$(nproc)"`
+- `ctest --test-dir ground_ui/build --output-on-failure`
+- `timeout 5s env QT_QPA_PLATFORM=offscreen ./ground_ui/build/openhd_ground_ui --demo`
